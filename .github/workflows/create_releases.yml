@@ -12,16 +12,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2  # Check out your repository
 
-    - name: Set up CMake
-      uses: cmake-actions/setup-cmake@v1
-      with:
-        cmake-version: '3.21'  # Adjust version as needed
-
+    - name: Configure Project
+      uses: threeal/cmake-action@v1.3.0
+      
     - name: Build and Package
       run: |
         cd third-party
         mkdir build
         cd build
         cmake ..
-        cmake --build . --target package  # Generate installer
+        cmake --build . --target dbcppp # Generate installer
         # Add commands to upload the installer artifact (e.g., using GitHub Actions' upload-artifact)
