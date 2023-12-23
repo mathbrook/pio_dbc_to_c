@@ -22,6 +22,24 @@ build_dir = env.subst("$BUILD_DIR")
 generated_src_dir = os.path.join(build_dir, 'dbcppp', 'generated-src')
 generated_build_dir = os.path.join(build_dir, 'dbcppp', 'generated-build')
 
+def install_dbcppp():
+    try:
+        print(subprocess.Popen(["./install-dbcppp.sh"], stdout=subprocess.PIPE))
+    except OSError as error:
+        print("ERROR occured while trying to install dep")
+try:
+    subprocess.Popen(["cmake"], stdout = subprocess.PIPE)
+    print("you have cmake installed")
+except OSError as error:
+    print("ERROR install cmake")
+
+try:
+    subprocess.Popen([build_dir+"/dbcppp-bin/dbcppp"], stdout = subprocess.PIPE)
+except OSError as error:
+    print("[pio_lib_gen] Installing dependencies");
+    install_dbcppp()
+
+
 user_dbc_files =  env.subst(env.GetProjectOption("user_dbcs", ""))
 
 dbc_files = fs.match_src_files(project_dir, user_dbc_files)
@@ -30,4 +48,4 @@ if not len(dbc_files):
     print(f"user_dbcs: {user_dbc_files}")
     exit(1)
 
-print("hello from lib")
+print("hello from lib2")
