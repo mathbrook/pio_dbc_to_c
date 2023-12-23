@@ -14,7 +14,8 @@ jobs:
 
     - name: Configure Project
       uses: threeal/cmake-action@v1.3.0
-      
+      with:
+        source-dir: third-party
     - name: Build and Package
       run: |
         cd third-party
