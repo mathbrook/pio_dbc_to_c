@@ -25,7 +25,7 @@ generated_build_dir = os.path.join(build_dir, 'dbcppp', 'generated-build')
 user_dbc_files =  env.subst(env.GetProjectOption("user_dbcs", ""))
 
 dbc_files = fs.match_src_files(project_dir, user_dbc_files)
-if not len(protos_files):
+if not len(dbc_files):
     print("[nanopb] ERROR: No files matched pattern:")
     print(f"user_dbcs: {user_dbc_files}")
     exit(1)
