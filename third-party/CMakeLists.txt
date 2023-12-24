@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.27)
 set(PROJECT_NAME dbcppp)
 set(REPO_URL https://github.com/xR3b0rn/dbcppp.git)
 
-Execute a command to clone the repository
+# Execute a command to clone the repository
 execute_process(
     COMMAND git clone --recurse-submodules ${REPO_URL} ${CMAKE_BINARY_DIR}/external/${PROJECT_NAME}
     RESULT_VARIABLE clone_result
