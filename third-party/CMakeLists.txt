@@ -7,12 +7,13 @@ ExternalProject_Add(
     PREFIX ${CMAKE_BINARY_DIR}/external/dbcppp  # Directory where the source will be downloaded
     GIT_REPOSITORY https://github.com/xR3b0rn/dbcppp.git  # Replace with your Git repository URL
     GIT_TAG v3.2.6 # Replace with the branch or tag you want to use
-    TIMEOUT 10  # Adjust as needed
+    TIMEOUT 40  # Adjust as needed
     CONFIGURE_COMMAND ""  # No configuration needed
     BUILD_COMMAND ""  # No build commands needed
     INSTALL_COMMAND ""  # No installation needed
     LOG_DOWNLOAD ON  # Enable logging for download details
-    GIT_SUBMODULES_INIT ON  # Fetch submodules
+    GIT_SUBMODULES_RECURSE ON
+    GIT_PROGRESS ON
 )
 
 # Use the downloaded project as part of your build
