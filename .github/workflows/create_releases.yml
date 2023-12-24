@@ -25,7 +25,9 @@ jobs:
         cp Project-0.1.0-win64.exe ../Project-0.1.0-win64.exe  # Replace with your actual installer name
         cd ..
         mv Project-0.1.0-win64.exe build-artifact/
-        # Upload the artifact
+        pwd
+        pwd
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
