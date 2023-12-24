@@ -4,33 +4,69 @@ on:
   push:
     branches:
       - main  # Adjust branch name as needed
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
-    runs-on: windows-latest  # Choose the appropriate OS for your project
+  # build-release-win:
+    # runs-on: windows-latest  # Choose the appropriate OS for your project
+
+    # steps:
+    # - uses: actions/checkout@v2  # Check out your repository
+
+    # - name: Configure Project
+    #   uses: threeal/cmake-action@v1.3.0
+    #   with:
+    #     source-dir: third-party
+    # - name: Build and Package for windows
+    #   run: |
+    #     cd third-party
+    #     cd build
+    #     cmake ..
+    #     cmake --build . --target package # Generate installer
+    #     cp Project-0.1.0-win64.exe ../Project-0.1.0-win64.exe  # Replace with your actual installer name
+    #     cd ..
+
+    # - name: Get current date and time
+    #   id: date
+    #   run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H_%M_%S')"
+
+    # - name: Release
+    #   uses: softprops/action-gh-release@v1
+    #   with:
+    #     tag_name: ${{ steps.date.outputs.date }} 
+    #     files: Project-0.1.0-win64.exe
+
+
+  build-and-push-image:
+    runs-on: ubuntu-latest 
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
-    - uses: actions/checkout@v2  # Check out your repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Configure Project
-      uses: threeal/cmake-action@v1.3.0
-      with:
-        source-dir: third-party
-    - name: Build and Package
-      run: |
-        cd third-party
-        cd build
-        cmake ..
-        cmake --build . --target package # Generate installer
-        cp Project-0.1.0-win64.exe ../Project-0.1.0-win64.exe  # Replace with your actual installer name
-        cd ..
-        
-    - name: Get current date and time
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H_%M_%S')"
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.date.outputs.date }} 
-        files: Project-0.1.0-win64.exe
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./third-party
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
