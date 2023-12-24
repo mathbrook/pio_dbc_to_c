@@ -40,12 +40,15 @@ except OSError as error:
     install_dbcppp()
 
 
-user_dbc_files =  env.subst(env.GetProjectOption("user_dbcs", ""))
 
-dbc_files = fs.match_src_files(project_dir, user_dbc_files)
-if not len(dbc_files):
-    print("[nanopb] ERROR: No files matched pattern:")
-    print(f"user_dbcs: {user_dbc_files}")
+user_dbc_file =  env.subst(env.GetProjectOption("user_dbc", ""))
+dbc_file = fs.match_src_files(project_dir, user_dbc_file)
+dir_dbc_path = os.path.dirname(os.path.realpath(user_dbc_file))
+
+if not len(dbc_file):
+    print("[nanopb] ERROR: No file matched pattern:")
+    print(f"user_dbcs: {user_dbc_file}")
     exit(1)
 
+print(subprocess.Popen(["docker run --rm -v "+dir_dbc_path+":/app/data  /app/build/dbcppp /app/data/"+os.path.basename(dbc_file)], stdout=subprocess.PIPE))
 print("hello from lib2")

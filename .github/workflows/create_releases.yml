@@ -6,7 +6,7 @@ on:
       - main  # Adjust branch name as needed
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: dbcppp
+  IMAGE_NAME: ${{ github.actor }}/dbcppp
 
 jobs:
   # build-release-win:
