@@ -19,8 +19,6 @@ jobs:
     - name: Build and Package
       run: |
         cd third-party
-        mkdir build
         cd build
         cmake ..
         cmake --build . --target dbcppp # Generate installer
-        # Add commands to upload the installer artifact (e.g., using GitHub Actions' upload-artifact)
