@@ -24,12 +24,13 @@ jobs:
         cmake --build . --target package # Generate installer
         cp Project-0.1.0-win64.exe ../Project-0.1.0-win64.exe  # Replace with your actual installer name
         cd ..
-        mv Project-0.1.0-win64.exe build-artifact/
-        pwd
-        pwd
+        
+    - name: Get current date and time
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H_%M_%S')"
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
-        name: Project-0.1.0-win64
-        path: build-artifact/
+        tag_name: ${{ steps.date.outputs.date }} 
+        files: Project-0.1.0-win64.exe
