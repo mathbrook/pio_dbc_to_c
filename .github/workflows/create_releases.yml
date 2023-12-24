@@ -21,4 +21,4 @@ jobs:
         cd third-party
         cd build
         cmake ..
-        cmake --build . --target dbcppp # Generate installer
+        cmake --build . --target package # Generate installer
