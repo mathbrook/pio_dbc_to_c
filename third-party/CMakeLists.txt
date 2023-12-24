@@ -19,7 +19,7 @@ add_custom_target(${PROJECT_NAME}Clone
 )
 
 
-add_subdirectory(${source_dir})
+add_subdirectory(${source_dir} ${CMAKE_BINARY_DIR}/external/YourProjectName-build)
 
 # Enable CPack module
 include(CPack)
