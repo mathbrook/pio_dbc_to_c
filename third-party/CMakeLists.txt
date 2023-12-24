@@ -1,24 +1,25 @@
+cmake_minimum_required(VERSION 3.27)
+# Define variables for the project and repository URL
+set(PROJECT_NAME dbcppp)
+set(REPO_URL https://github.com/xR3b0rn/dbcppp.git)
 
-include(ExternalProject)
-
-# Set up an external project to pull source code from Git along with submodules
-ExternalProject_Add(
-    dbcppp# Name for this external project
-    PREFIX ${CMAKE_BINARY_DIR}/external/dbcppp  # Directory where the source will be downloaded
-    GIT_REPOSITORY https://github.com/xR3b0rn/dbcppp.git  # Replace with your Git repository URL
-    GIT_TAG v3.2.6 # Replace with the branch or tag you want to use
-    TIMEOUT 40  # Adjust as needed
-    CONFIGURE_COMMAND ""  # No configuration needed
-    BUILD_COMMAND ""  # No build commands needed
-    INSTALL_COMMAND ""  # No installation needed
-    LOG_DOWNLOAD ON  # Enable logging for download details
-    GIT_SUBMODULES_RECURSE ON
-    GIT_PROGRESS ON
+# Execute a command to clone the repository
+execute_process(
+    COMMAND git clone --recurse-submodules ${REPO_URL} ${CMAKE_BINARY_DIR}/external/${PROJECT_NAME}
+    RESULT_VARIABLE clone_result
 )
 
-# Use the downloaded project as part of your build
-ExternalProject_Get_Property(dbcppp source_dir)
-add_subdirectory(${source_dir} ${CMAKE_BINARY_DIR}/external/dbcppp-build)
+if(NOT ${clone_result} EQUAL 0)
+    message(FATAL_ERROR "Failed to clone the repository.")
+endif()
+
+# Create a custom target that depends on the completion of the clone process
+add_custom_target(${PROJECT_NAME}Clone
+    DEPENDS ${CMAKE_BINARY_DIR}/external/${PROJECT_NAME}
+)
+
+
+add_subdirectory(${source_dir})
 
 # Enable CPack module
 include(CPack)
