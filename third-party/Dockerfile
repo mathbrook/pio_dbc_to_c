@@ -17,7 +17,7 @@ RUN git clone --recurse-submodules https://github.com/xR3b0rn/dbcppp.git /app
 WORKDIR /app
 
 # Build the CMake project
-RUN mkdir build && cd build && cmake .. && make -j && make install
+RUN mkdir build && cd build && cmake .. && make -j && make install && ldconfig
 
 # Cleanup unnecessary packages and files
 RUN apt-get autoremove -y \
