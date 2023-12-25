@@ -11,18 +11,18 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Copy the CMake project files into the container
-RUN git clone --recurse-submodules https://github.com/xR3b0rn/dbcppp.git /app
+RUN git clone https://github.com/astand/c-coderdbc.git /app
 # Set working directory
 WORKDIR /app
-RUN git checkout v3.2.6
 
 # Build the CMake project
-RUN mkdir build && cd build && cmake .. && make -j && make install && ldconfig
+RUN cmake -S src -B build
 
+RUN cmake --build build --config release
 # Cleanup unnecessary packages and files
 RUN apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /app
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Set an entrypoint if needed
 # ENTRYPOINT ["executable"]

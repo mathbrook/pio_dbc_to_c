@@ -42,6 +42,6 @@ abs_path_to_dbc = project_dir+'/'+rel_dir_dbc_path
 print(abs_path_to_dbc)
 print(generated_src_dir)
 client = docker.from_env()
-client.containers.run('ghcr.io/rcmast3r/dbcppp:main', './gen_cpp.sh', volumes=[abs_path_to_dbc+":/data", os.getcwd()+":/work_dir", generated_src_dir+":/out"], working_dir='/work_dir')
+client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -dbc /data/hytech.dbc -out /out -drvname hytech', volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
 
 print("hello from lib2")
