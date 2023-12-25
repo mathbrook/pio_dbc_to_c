@@ -8,6 +8,7 @@ import pathlib
 
 import subprocess
 
+import docker
 import SCons.Action
 from platformio import fs
 
@@ -22,33 +23,25 @@ build_dir = env.subst("$BUILD_DIR")
 generated_src_dir = os.path.join(build_dir, 'dbcppp', 'generated-src')
 generated_build_dir = os.path.join(build_dir, 'dbcppp', 'generated-build')
 
-def install_dbcppp():
-    try:
-        print(subprocess.Popen(["./install-dbcppp.sh"], stdout=subprocess.PIPE))
-    except OSError as error:
-        print("ERROR occured while trying to install dep")
-try:
-    subprocess.Popen(["cmake"], stdout = subprocess.PIPE)
-    print("you have cmake installed")
-except OSError as error:
-    print("ERROR install cmake")
-
-try:
-    subprocess.Popen([build_dir+"/dbcppp-bin/dbcppp"], stdout = subprocess.PIPE)
-except OSError as error:
-    print("[pio_lib_gen] Installing dependencies");
-    install_dbcppp()
-
-
-
 user_dbc_file =  env.subst(env.GetProjectOption("user_dbc", ""))
 dbc_file = fs.match_src_files(project_dir, user_dbc_file)
-dir_dbc_path = os.path.dirname(os.path.realpath(user_dbc_file))
+rel_dir_dbc_path = os.path.dirname(dbc_file[0])
+
+dbc_file_name = os.path.basename(dbc_file[0])
 
 if not len(dbc_file):
     print("[nanopb] ERROR: No file matched pattern:")
     print(f"user_dbcs: {user_dbc_file}")
     exit(1)
 
-print(subprocess.Popen(["docker run --rm -v "+dir_dbc_path+":/app/data  /app/build/dbcppp /app/data/"+os.path.basename(dbc_file)], stdout=subprocess.PIPE))
+print("yo")
+print(user_dbc_file)
+
+abs_path_to_dbc = project_dir+'/'+rel_dir_dbc_path
+
+print(abs_path_to_dbc)
+print(generated_src_dir)
+client = docker.from_env()
+client.containers.run('ghcr.io/rcmast3r/dbcppp:main', './gen_cpp.sh', volumes=[abs_path_to_dbc+":/data", os.getcwd()+":/work_dir", generated_src_dir+":/out"], working_dir='/work_dir')
+
 print("hello from lib2")

@@ -12,9 +12,9 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the CMake project files into the container
 RUN git clone --recurse-submodules https://github.com/xR3b0rn/dbcppp.git /app
-
 # Set working directory
 WORKDIR /app
+RUN git checkout v3.2.6
 
 # Build the CMake project
 RUN mkdir build && cd build && cmake .. && make -j && make install && ldconfig
