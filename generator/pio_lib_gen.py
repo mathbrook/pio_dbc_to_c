@@ -24,6 +24,7 @@ generated_src_dir = os.path.join(build_dir, 'dbcppp', 'generated-src')
 generated_build_dir = os.path.join(build_dir, 'dbcppp', 'generated-build')
 
 user_dbc_file =  env.subst(env.GetProjectOption("user_dbc", ""))
+drvname=  env.subst(env.GetProjectOption("drvname", ""))
 dbc_file = fs.match_src_files(project_dir, user_dbc_file)
 rel_dir_dbc_path = os.path.dirname(dbc_file[0])
 
@@ -42,6 +43,9 @@ abs_path_to_dbc = project_dir+'/'+rel_dir_dbc_path
 print(abs_path_to_dbc)
 print(generated_src_dir)
 client = docker.from_env()
-client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -dbc /data/hytech.dbc -out /out -drvname hytech', volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
+
+client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -noconfig -dbc /data/hytech.dbc -out /out -drvname '+drvname, user=os.getuid(),volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
+# client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', 'find /out -type d -exec chmod 755 {} \;', volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
+# client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', 'chmod 755 /out', volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
 
 print("hello from lib2")
