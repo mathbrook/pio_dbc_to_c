@@ -17,7 +17,6 @@ WORKDIR /app
 
 # Build the CMake project
 RUN cmake -S src -B build
-RUN mkdir -p /out && chmod a+rw /out
 
 RUN cmake --build build --config release
 # Cleanup unnecessary packages and files

@@ -72,6 +72,6 @@ client = docker.from_env()
 
 print(client.api)
 print(client.containers)
-client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -noconfig -dbc /data/hytech.dbc -out /out -drvname '+drvname, environment=["PUID=1000", "GUID=1000"],volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
+client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -noconfig -dbc /data/hytech.dbc -out /out -drvname '+drvname,group_add=["1000"], environment=["PUID=1000", "GUID=1000"],volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
 
 print("hello from lib2")
