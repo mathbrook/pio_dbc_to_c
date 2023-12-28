@@ -27,6 +27,7 @@ RUN apt-get autoremove -y \
 
 # Set an entrypoint if needed
 # ENTRYPOINT ["executable"]
+VOLUME /out
 
 # Set default command if needed
 # CMD ["command"]

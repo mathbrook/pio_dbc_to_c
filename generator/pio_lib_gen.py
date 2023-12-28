@@ -1,14 +1,19 @@
 # TODO get and build dbcppp if needed
 # TODO get dbc file from url or local file
 # TODO run dbcppp on supplied dbc file
-
+Import("env")
 import os
 import hashlib
 import pathlib
 
 import subprocess
 
-import docker
+
+try:
+    import docker
+except ImportError:
+    env.Execute("$PYTHONEXE -m pip install docker")        
+    import docker
 import SCons.Action
 
 import tarfile
@@ -16,7 +21,7 @@ from platformio import fs
 
 # based on https://github.com/nanopb/nanopb/blob/master/generator/platformio_generator.py
 
-Import("env")
+
 
 python_exe = env.subst("$PYTHONEXE")
 project_dir = env.subst("$PROJECT_DIR")
@@ -51,7 +56,7 @@ def copy_to(src, dst):
 
 
 if not len(dbc_file):
-    print("[nanopb] ERROR: No file matched pattern:")
+    print("[dbcpio] ERROR: No file matched pattern:")
     print(f"user_dbcs: {user_dbc_file}")
     exit(1)
 
@@ -62,7 +67,11 @@ abs_path_to_dbc = project_dir+'/'+rel_dir_dbc_path
 
 print(abs_path_to_dbc)
 print(generated_src_dir)
+print(docker)
 client = docker.from_env()
 
-client.containers.run('asdf:asdf', './scr.sh '+drvname+' '+,volumes=[abs_path_to_dbc+":/data"], working_dir='/app')
+print(client.api)
+print(client.containers)
+client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -noconfig -dbc /data/hytech.dbc -out /out -drvname '+drvname, environment=["PUID=1000", "GUID=1000"],volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
+
 print("hello from lib2")
