@@ -10,6 +10,8 @@ import subprocess
 
 import docker
 import SCons.Action
+
+import tarfile
 from platformio import fs
 
 # based on https://github.com/nanopb/nanopb/blob/master/generator/platformio_generator.py
@@ -30,6 +32,24 @@ rel_dir_dbc_path = os.path.dirname(dbc_file[0])
 
 dbc_file_name = os.path.basename(dbc_file[0])
 
+import tarfile
+
+def copy_to(src, dst):
+    name, dst = dst.split(':')
+    container = client.containers.get(name)
+
+    os.chdir(os.path.dirname(src))
+    srcname = os.path.basename(src)
+    tar = tarfile.open(src + '.tar', mode='w')
+    try:
+        tar.add(srcname)
+    finally:
+        tar.close()
+
+    data = open(src + '.tar', 'rb').read()
+    container.put_archive(os.path.dirname(dst), data)
+
+
 if not len(dbc_file):
     print("[nanopb] ERROR: No file matched pattern:")
     print(f"user_dbcs: {user_dbc_file}")
@@ -44,8 +64,5 @@ print(abs_path_to_dbc)
 print(generated_src_dir)
 client = docker.from_env()
 
-client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -noconfig -dbc /data/hytech.dbc -out /out -drvname '+drvname, user=os.getuid(),volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
-# client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', 'find /out -type d -exec chmod 755 {} \;', volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
-# client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', 'chmod 755 /out', volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
-
+client.containers.run('asdf:asdf', './scr.sh '+drvname+' '+,volumes=[abs_path_to_dbc+":/data"], working_dir='/app')
 print("hello from lib2")
