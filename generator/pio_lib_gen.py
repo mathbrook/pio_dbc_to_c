@@ -56,7 +56,7 @@ if valid_dbc_url:
 
     if response.status_code == 200:
         # Directory where you want to save the file
-        abs_path_to_dbc = generated_src_dir+'/dbcs'
+        abs_path_to_dbc = os.path.join(generated_src_dir, 'dbcs')
         # Create the directory if it doesn't exist
         os.makedirs(abs_path_to_dbc, exist_ok=True)
 
@@ -78,9 +78,9 @@ if valid_dbc_url:
 else:
     dbc_file = fs.match_src_files(project_dir, user_dbc_file)
     rel_dir_dbc_path = os.path.dirname(dbc_file[0])
-    abs_path_to_dbc = project_dir + "/" + rel_dir_dbc_path
+    abs_path_to_dbc = os.path.join(project_dir, rel_dir_dbc_path)
     dbc_file_name = os.path.basename(dbc_file[0])
-    
+
     if not len(dbc_file):
         print("[dbcpio] ERROR: No file matched pattern:")
         print(f"user_dbcs: {user_dbc_file}")
@@ -106,9 +106,9 @@ client.containers.run(
 env.Append(
     CPPPATH=[
         generated_src_dir,
-        generated_src_dir + "/inc",
-        generated_src_dir + "/lib",
-        generated_src_dir + "/conf",
+         os.path.join(generated_src_dir, "inc"),
+         os.path.join(generated_src_dir, "lib"),
+         os.path.join(generated_src_dir , "conf"),
     ]
 )
 
