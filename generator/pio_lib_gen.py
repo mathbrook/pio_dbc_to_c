@@ -1,12 +1,8 @@
-# TODO get and build dbcppp if needed
+
 # TODO get dbc file from url or local file
-# TODO run dbcppp on supplied dbc file
+
 Import("env")
 import os
-import hashlib
-import pathlib
-
-import subprocess
 
 
 try:
@@ -14,6 +10,20 @@ try:
 except ImportError:
     env.Execute("$PYTHONEXE -m pip install docker")
     import docker
+
+try: 
+    import validators
+except ImportError:
+    env.Execute("$PYTHONEXE -m pip install validators")
+    import validators
+
+try: 
+    import requests
+except ImportError:
+    env.Execute("$PYTHONEXE -m pip install requests")
+    import requests
+
+
 import SCons.Action
 
 import tarfile
@@ -27,26 +37,59 @@ project_dir = env.subst("$PROJECT_DIR")
 build_dir = env.subst("$BUILD_DIR")
 
 generated_src_dir = os.path.join(build_dir, "dbcppp", "generated-src")
+
+if not os.path.isdir(generated_src_dir):
+    os.makedirs(generated_src_dir)
+
 generated_build_dir = os.path.join(build_dir, "dbcppp", "generated-build")
 
 user_dbc_file = env.subst(env.GetProjectOption("user_dbc", ""))
 drvname = env.subst(env.GetProjectOption("drvname", ""))
-dbc_file = fs.match_src_files(project_dir, user_dbc_file)
-rel_dir_dbc_path = os.path.dirname(dbc_file[0])
 
-dbc_file_name = os.path.basename(dbc_file[0])
-
-if not len(dbc_file):
-    print("[dbcpio] ERROR: No file matched pattern:")
-    print(f"user_dbcs: {user_dbc_file}")
-    exit(1)
+valid_dbc_url = validators.url(user_dbc_file)
 
 
-abs_path_to_dbc = project_dir + "/" + rel_dir_dbc_path
+dbc_file_name = ""
+abs_path_to_dbc = ""
+if valid_dbc_url:
+    response = requests.get(user_dbc_file)
+
+    if response.status_code == 200:
+        # Directory where you want to save the file
+        abs_path_to_dbc = generated_src_dir+'/dbcs'
+        # Create the directory if it doesn't exist
+        os.makedirs(abs_path_to_dbc, exist_ok=True)
+
+        # Extracting the file name from the URL
+        dbc_file_name = user_dbc_file.split('/')[-1]
+
+        # Full path to save the file
+        abs_path_to_dbc = abs_path_to_dbc
+        file_path = os.path.join(abs_path_to_dbc, dbc_file_name)
+
+        # Write the file to the specified directory
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+            print(f"dbc file '{dbc_file_name}' saved to '{abs_path_to_dbc}'")
+
+    else:
+        print("[dbcpio] ERROR: could not download dbc file from specified url")
+        exit(1)
+else:
+    dbc_file = fs.match_src_files(project_dir, user_dbc_file)
+    rel_dir_dbc_path = os.path.dirname(dbc_file[0])
+    abs_path_to_dbc = project_dir + "/" + rel_dir_dbc_path
+    dbc_file_name = os.path.basename(dbc_file[0])
+    
+    if not len(dbc_file):
+        print("[dbcpio] ERROR: No file matched pattern:")
+        print(f"user_dbcs: {user_dbc_file}")
+        exit(1)
+
+
+
 client = docker.from_env()
 
-if not os.path.isdir(generated_src_dir):
-    os.makedirs(generated_src_dir)
 
 client.containers.run(
     "ghcr.io/rcmast3r/ccoderdbc:main",
