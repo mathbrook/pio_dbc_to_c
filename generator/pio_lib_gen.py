@@ -72,6 +72,14 @@ client = docker.from_env()
 
 print(client.api)
 print(client.containers)
-client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -noconfig -dbc /data/hytech.dbc -out /out -drvname '+drvname,group_add=["1000"], environment=["PUID=1000", "GUID=1000"],volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
-
+if not os.path.isdir(generated_src_dir):
+    os.makedirs(generated_src_dir)
+# client.containers.run('ghcr.io/rcmast3r/ccoderdbc:main', './build/coderdbc -rw -noconfig -dbc /data/hytech.dbc -out /out -drvname '+drvname,group_add=["1000"], environment=["PUID=1000", "GUID=1000"],volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
+client.containers.run('docker.io/library/asdf', './build/coderdbc -rw -dbc /data/hytech.dbc -out /out -drvname '+drvname,group_add=["1000"], user=1000,volumes=[abs_path_to_dbc+":/data", generated_src_dir+":/out"], working_dir='/app')
+print(generated_src_dir)
+env.Append(CPPPATH=[generated_src_dir, generated_src_dir+'/inc', generated_src_dir+'/lib', generated_src_dir+'/conf'])
+global_env = DefaultEnvironment()
+# already_called_env_name = "_PROTOBUF_GENERATOR_ALREADY_CALLED_" + env['PIOENV'].replace("-", "_")
+# if not global_env.get(already_called_env_name, False):
+env.BuildSources(generated_build_dir, generated_src_dir)
 print("hello from lib2")

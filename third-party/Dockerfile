@@ -17,7 +17,6 @@ WORKDIR /app
 
 # Build the CMake project
 RUN cmake -S src -B build
-
 RUN cmake --build build --config release
 # Cleanup unnecessary packages and files
 RUN apt-get autoremove -y \
@@ -26,6 +25,9 @@ RUN apt-get autoremove -y \
 
 # Set an entrypoint if needed
 # ENTRYPOINT ["executable"]
+RUN mkdir -p /out/lib && chmod -R 777 /out/lib
+RUN chown -R 1000:1000 /out/lib
+
 VOLUME /out
 
 # Set default command if needed
