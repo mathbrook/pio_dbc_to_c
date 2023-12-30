@@ -1,4 +1,4 @@
-
+# TODO make this work lmao
 # TODO get dbc file from url or local file
 
 Import("env")
@@ -92,11 +92,10 @@ client = docker.from_env()
 
 
 client.containers.run(
-    "ghcr.io/rcmast3r/ccoderdbc:main",
-    "./build/coderdbc -rw -dbc /data/"
-    + dbc_file_name
-    + " -out /out -drvname "
-    + drvname,
+    "ghcr.io/mathbrook/ccoderdbc:main",
+    "./dbcc -o /out "
+    + "/data/"
+    + dbc_file_name,
     group_add=["1000"],
     user=1000,
     volumes=[abs_path_to_dbc + ":/data", generated_src_dir + ":/out"],
