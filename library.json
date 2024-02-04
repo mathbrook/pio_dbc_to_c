@@ -1,6 +1,6 @@
 {
     "name": "pio_dbc_to_cpp",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "repository": {
       "type": "git",
       "url": "https://github.com/RCMast3r/pio_dbc_to_cpp.git"
