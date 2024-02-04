@@ -26,6 +26,7 @@ RUN apt-get autoremove -y \
 # Set an entrypoint if needed
 # ENTRYPOINT ["executable"]
 RUN mkdir -p /out/lib && chmod -R 777 /out/lib
+RUN chmod -R 777 /out/
 RUN chown -R 1000:1000 /out/lib
 
 VOLUME /out
